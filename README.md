@@ -8,7 +8,7 @@ Once-style braille progress bars for [ratatui](https://ratatui.rs).
 
 Inspired by [Basecamp's Once](https://github.com/basecamp/once) dashboard meters.
 
-![Example](.github/media/example.png)
+![Demo](.github/media/demo.gif)
 
 ## Features
 
