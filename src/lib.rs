@@ -119,16 +119,16 @@ impl BrailleBar {
         if self.peak > 0.0 {
             peak_pos = peak_pos.max(filled.saturating_sub(1));
             peak_pos = peak_pos.min(width - 1);
-            for i in 0..width {
+            for (i, style) in cell_styles.iter_mut().enumerate().take(width) {
                 if i == peak_pos {
-                    cell_styles[i] = Style::default().fg(self.peak_color);
+                    *style = Style::default().fg(self.peak_color);
                 } else if i < filled {
-                    cell_styles[i] = Style::default().fg(self.fill_color);
+                    *style = Style::default().fg(self.fill_color);
                 }
             }
         } else {
-            for i in 0..filled {
-                cell_styles[i] = Style::default().fg(self.fill_color);
+            for style in cell_styles.iter_mut().take(filled) {
+                *style = Style::default().fg(self.fill_color);
             }
         }
 
