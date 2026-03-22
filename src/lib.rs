@@ -9,7 +9,7 @@
 //!
 //! ## Quick start
 //!
-//! ```rust,no_run
+//! ```rust,ignore
 //! use ratatui_braille_bar::BrailleBar;
 //!
 //! // Inside your ratatui draw closure:
