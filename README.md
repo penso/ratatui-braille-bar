@@ -1,13 +1,14 @@
 # ratatui-braille-bar
 
+[![CI](https://github.com/penso/ratatui-braille-bar/actions/workflows/ci.yml/badge.svg)](https://github.com/penso/ratatui-braille-bar/actions/workflows/ci.yml)
+[![Crates.io](https://img.shields.io/crates/v/ratatui-braille-bar)](https://crates.io/crates/ratatui-braille-bar)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
+
 Once-style braille progress bars for [ratatui](https://ratatui.rs).
 
 Inspired by [Basecamp's Once](https://github.com/basecamp/once) dashboard meters.
 
-```
-CPU  62%
-⢾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡷
-```
+![Example](.github/media/example.png)
 
 ## Features
 
