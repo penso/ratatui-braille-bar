@@ -18,6 +18,7 @@ Inspired by [Basecamp's Once](https://github.com/basecamp/once) dashboard meters
 - Auto-sizes to `area.width` — no manual width needed
 - Implements `ratatui::Widget`
 - Also exposes `into_line()` for composing into larger widgets
+- `BrailleSpinner` — random braille dot pattern for indeterminate/loading states
 
 ## Usage
 
@@ -37,6 +38,13 @@ frame.render_widget(
 let line = BrailleBar::new(0.42, 1.0)
     .fill_color(Color::Green)
     .into_line(30);
+
+// Random braille spinner (re-render each frame for animation)
+use ratatui_braille_bar::BrailleSpinner;
+frame.render_widget(
+    BrailleSpinner::new().color(Color::Rgb(99, 102, 241)),
+    area,
+);
 ```
 
 ## Run the example

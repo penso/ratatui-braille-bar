@@ -7,13 +7,13 @@ use crossterm::{
 };
 use ratatui::{
     backend::CrosstermBackend,
-    layout::{Constraint, Flex, Layout},
+    layout::{Alignment, Constraint, Flex, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::Paragraph,
     Terminal,
 };
-use ratatui_braille_bar::BrailleBar;
+use ratatui_braille_bar::{BrailleBar, BrailleSpinner};
 
 fn main() -> io::Result<()> {
     enable_raw_mode()?;
@@ -24,8 +24,9 @@ fn main() -> io::Result<()> {
     let mut tick: u64 = 0;
     let mut cpu = 62.0f64;
     let cpu_peak = 78.0f64;
-    let mem_bytes: f64 = 420.0 * 1024.0 * 1024.0;
+    let mut mem_bytes: f64 = 420.0 * 1024.0 * 1024.0;
     let mem_peak = 510.0 * 1024.0 * 1024.0;
+    let mut traffic = 1250.0f64;
 
     let dim = Style::default().fg(Color::Rgb(140, 140, 140));
     let bright = Style::default()
@@ -36,7 +37,7 @@ fn main() -> io::Result<()> {
         terminal.draw(|frame| {
             let [_, center, _] = Layout::vertical([
                 Constraint::Fill(1),
-                Constraint::Length(10),
+                Constraint::Length(11),
                 Constraint::Fill(1),
             ])
             .areas(frame.area());
@@ -46,23 +47,31 @@ fn main() -> io::Result<()> {
                 .areas(center);
 
             let rows = Layout::vertical([
-                Constraint::Length(1),
-                Constraint::Length(1),
-                Constraint::Length(1),
-                Constraint::Length(1),
-                Constraint::Length(1),
-                Constraint::Length(1),
-                Constraint::Length(1),
-                Constraint::Length(1),
+                Constraint::Length(1), // 0: CPU label
+                Constraint::Length(1), // 1: CPU bar
+                Constraint::Length(1), // 2: blank
+                Constraint::Length(1), // 3: Memory label
+                Constraint::Length(1), // 4: Memory bar
+                Constraint::Length(1), // 5: blank
+                Constraint::Length(1), // 6: Traffic label
+                Constraint::Length(1), // 7: Traffic bar
+                Constraint::Length(1), // 8: blank
+                Constraint::Length(1), // 9: Preparing label
+                Constraint::Length(1), // 10: Preparing spinner
             ])
             .split(col);
 
             // CPU
             frame.render_widget(
-                Paragraph::new(Line::from(vec![
-                    Span::styled("CPU  ", dim),
-                    Span::styled(format!("{:.0}%", cpu), bright),
-                ])),
+                Paragraph::new(Line::from(vec![Span::styled("CPU", dim)])),
+                rows[0],
+            );
+            frame.render_widget(
+                Paragraph::new(Line::from(vec![Span::styled(
+                    format!("{:.0}%", cpu),
+                    bright,
+                )]))
+                .alignment(Alignment::Right),
                 rows[0],
             );
             frame.render_widget(
@@ -76,10 +85,15 @@ fn main() -> io::Result<()> {
             let mem_mb = mem_bytes / (1024.0 * 1024.0);
             let mem_max = 1024.0 * 1024.0 * 1024.0;
             frame.render_widget(
-                Paragraph::new(Line::from(vec![
-                    Span::styled("Memory  ", dim),
-                    Span::styled(format!("{:.0} MB", mem_mb), bright),
-                ])),
+                Paragraph::new(Line::from(vec![Span::styled("Memory", dim)])),
+                rows[3],
+            );
+            frame.render_widget(
+                Paragraph::new(Line::from(vec![Span::styled(
+                    format!("{:.0} MB", mem_mb),
+                    bright,
+                )]))
+                .alignment(Alignment::Right),
                 rows[3],
             );
             frame.render_widget(
@@ -91,15 +105,30 @@ fn main() -> io::Result<()> {
 
             // Traffic
             frame.render_widget(
-                Paragraph::new(Line::from(vec![
-                    Span::styled("Traffic  ", dim),
-                    Span::styled("1250 req/m", bright),
-                ])),
+                Paragraph::new(Line::from(vec![Span::styled("Traffic", dim)])),
                 rows[6],
             );
             frame.render_widget(
-                BrailleBar::new(1250.0, 5000.0).fill_color(Color::Rgb(59, 130, 246)),
+                Paragraph::new(Line::from(vec![Span::styled(
+                    format!("{:.0} req/m", traffic),
+                    bright,
+                )]))
+                .alignment(Alignment::Right),
+                rows[6],
+            );
+            frame.render_widget(
+                BrailleBar::new(traffic, 5000.0).fill_color(Color::Rgb(59, 130, 246)),
                 rows[7],
+            );
+
+            // Preparing (spinner)
+            frame.render_widget(
+                Paragraph::new(Line::from(vec![Span::styled("Preparing...", dim)])),
+                rows[9],
+            );
+            frame.render_widget(
+                BrailleSpinner::new().color(Color::Rgb(99, 102, 241)),
+                rows[10],
             );
         })?;
 
@@ -112,7 +141,11 @@ fn main() -> io::Result<()> {
         }
 
         tick += 1;
-        cpu = (cpu + (tick as f64 * 0.08).sin() * 2.0).clamp(0.0, 100.0);
+        let t = tick as f64;
+        cpu = (cpu + (t * 0.08).sin() * 2.0).clamp(0.0, 100.0);
+        mem_bytes = (mem_bytes + (t * 0.05).cos() * 5.0 * 1024.0 * 1024.0)
+            .clamp(200.0 * 1024.0 * 1024.0, 800.0 * 1024.0 * 1024.0);
+        traffic = (traffic + (t * 0.12).sin() * 30.0).clamp(200.0, 4500.0);
     }
 
     disable_raw_mode()?;

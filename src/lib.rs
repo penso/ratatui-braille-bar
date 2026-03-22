@@ -23,6 +23,7 @@
 //!
 //! The bar automatically fills `area.width` — no manual width needed.
 
+use rand::Rng;
 use ratatui::{
     buffer::Buffer,
     layout::Rect,
@@ -150,6 +151,71 @@ impl BrailleBar {
 }
 
 impl Widget for BrailleBar {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        Paragraph::new(self.into_line(area.width as usize)).render(area, buf);
+    }
+}
+
+/// A random braille dot pattern widget, used as an indeterminate spinner.
+///
+/// Fills the area with random braille characters (U+2800–U+28FF), producing
+/// an animated shimmer effect when re-rendered each frame — just like the
+/// "Preparing..." state in Basecamp's Once installer.
+///
+/// # Example
+///
+/// ```rust,ignore
+/// // Re-render every ~50ms for the animated effect
+/// frame.render_widget(
+///     BrailleSpinner::new().color(Color::Rgb(99, 102, 241)),
+///     area,
+/// );
+/// ```
+#[derive(Debug, Clone)]
+pub struct BrailleSpinner {
+    color: Color,
+}
+
+impl BrailleSpinner {
+    /// Create a new spinner with the default indigo color.
+    pub fn new() -> Self {
+        Self {
+            color: Color::Rgb(99, 102, 241),
+        }
+    }
+
+    /// Set the color for the braille dots.
+    pub fn color(mut self, color: Color) -> Self {
+        self.color = color;
+        self
+    }
+
+    /// Render to a [`Line`] with explicit width.
+    pub fn into_line(self, width: usize) -> Line<'static> {
+        if width == 0 {
+            return Line::default();
+        }
+
+        let style = Style::default().fg(self.color);
+        let mut rng = rand::rng();
+        let spans: Vec<Span<'static>> = (0..width)
+            .map(|_| {
+                let ch = char::from_u32(0x2800 + rng.random_range(0..256)).unwrap_or('⣿');
+                Span::styled(ch.to_string(), style)
+            })
+            .collect();
+
+        Line::from(spans)
+    }
+}
+
+impl Default for BrailleSpinner {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Widget for BrailleSpinner {
     fn render(self, area: Rect, buf: &mut Buffer) {
         Paragraph::new(self.into_line(area.width as usize)).render(area, buf);
     }

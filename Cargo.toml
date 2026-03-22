@@ -10,6 +10,7 @@ categories = ["command-line-interface"]
 readme = "README.md"
 
 [dependencies]
+rand = "0.9"
 ratatui = "0.29"
 
 [dev-dependencies]
