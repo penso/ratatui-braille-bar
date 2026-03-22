@@ -1,0 +1,16 @@
+[package]
+name = "ratatui-braille-bar"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Once-style braille progress bars for ratatui"
+repository = "https://github.com/youruser/ratatui-braille-bar"
+keywords = ["ratatui", "tui", "progress", "braille", "widget"]
+categories = ["command-line-interface"]
+readme = "README.md"
+
+[dependencies]
+ratatui = "0.29"
+
+[dev-dependencies]
+crossterm = "0.28"
