@@ -98,8 +98,7 @@ fn main() -> io::Result<()> {
                 rows[6],
             );
             frame.render_widget(
-                BrailleBar::new(1250.0, 5000.0)
-                    .fill_color(Color::Rgb(59, 130, 246)),
+                BrailleBar::new(1250.0, 5000.0).fill_color(Color::Rgb(59, 130, 246)),
                 rows[7],
             );
         })?;

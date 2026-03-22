@@ -31,8 +31,8 @@ use ratatui::{
     widgets::{Paragraph, Widget},
 };
 
-const BAR_FULL: &str = "\u{28FF}";        // ⣿
-const BAR_ROUND_LEFT: &str = "\u{28BE}";  // ⢾
+const BAR_FULL: &str = "\u{28FF}"; // ⣿
+const BAR_ROUND_LEFT: &str = "\u{28BE}"; // ⢾
 const BAR_ROUND_RIGHT: &str = "\u{2877}"; // ⡷
 
 /// A braille progress bar widget for ratatui.
