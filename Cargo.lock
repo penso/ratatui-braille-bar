@@ -370,7 +370,7 @@ dependencies = [
 
 [[package]]
 name = "ratatui-braille-bar"
-version = "0.1.0"
+version = "0.2.1"
 dependencies = [
  "crossterm",
  "rand",
