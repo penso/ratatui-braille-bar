@@ -1,6 +1,6 @@
 [package]
 name = "ratatui-braille-bar"
-version = "0.2.2"
+version = "0.3.0"
 edition = "2021"
 license = "MIT"
 description = "Once-style braille progress bars for ratatui"
@@ -11,7 +11,8 @@ readme = "README.md"
 
 [dependencies]
 rand = "0.9"
-ratatui = "0.29"
+ratatui = { version = "0.30", default-features = false }
 
 [dev-dependencies]
-crossterm = "0.28"
+crossterm = "0.29"
+ratatui = { version = "0.30", default-features = false, features = ["crossterm"] }
